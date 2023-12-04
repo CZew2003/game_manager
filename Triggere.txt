@@ -1,0 +1,5 @@
+1) Cand adaugam un campion nou se va creea un skin default
+2) Cand adaugam un client, numarul de playeri din regiunea din care face parte va creste
+3) Cand adaugam un client, ii vom da 3 campioni
+4) Cand adaugam un client, vom anunta tabela Events
+5) Cand adaugam un update, vom anunta tabela Events

@@ -1,0 +1,5 @@
+1) Modul player - acest client va putea doar sa vada datele despre el (din Client, Mastery, LootSkins, 
+LootChampions, Friends, Meciuri jucate) si va putea sa vada toate update-urile
+2) Modul admin - acest client va avea acces la crearea update-urilor si la datele pe care le poate vedea deja 
+player-ul si va putea sa puna meciurile jucate
+3) Modul super-admin - acest client va avea acces si la modificarea clientilor din tabela

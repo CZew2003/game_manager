@@ -1,0 +1,24 @@
+1) Cumparare RP - player
+2) Schimbare RP pentru Blue Essence / Orange Essence - player
+3) Cumparare skin cu RP - player
+4) Cumparare skin cu Orange Essence - player
+5) Disenchant skin cu Orange Essence - player
+6) Reroll 3 skinuri pentru un skin permanent - player
+7) Cumparare campion cu full price - player
+8) Cumparare campion cu shard - player 
+9) Upgrade la mastery cu Orange Essence(pt level 5 trb unul singur, pt level 6 trebuie 2) - player
+10) Adaugare client - player
+11) Adaugare update - admin
+12) Adaugare detalii despre un player dintr-un meci - admin
+13) Adaugare detalii meci - admin
+14) Statistici legate de rankuri -super-admin
+15) Creare rune pentru player din meci - admin
+16) Adaugare friend - player
+17) Update la rank / level - admin	
+18) Adaugare mastery / LootSkin / LootChampion pentru un client - admin
+19) Modificare regiune player / nume / parola - super-admin
+20) Vizualizare match history - player
+21) Vizualizare Updates - player
+22) Vizualizare campioni - player
+23) Vizualizare skins - player
+24) Vizualizare loot - player

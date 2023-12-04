@@ -1,0 +1,2 @@
+https://developer.riotgames.com/docs/lol#data-dragon_champions
+https://ddragon.leagueoflegends.com/cdn/10.16.1/data/en_US/runesReforged.json
