@@ -12,6 +12,7 @@ create table if not exists Champions (
     baseMagicResist int,
     baseMovementSpeed int,
     baseHealthRegen int,
+    baseDamage int,
     baseAttackSpeed float,
     fullPrice int,
     shardPrice int,
@@ -20,13 +21,14 @@ create table if not exists Champions (
 CREATE TABLE if not exists Skins (
     idSkin INT PRIMARY KEY,
     idChampion INT,
+	personalId INT,
     name VARCHAR(45),
     priceRP INT,
     priceOrangeEssence INT,
     disenchantOrangeEssence INT,
     FOREIGN KEY (idChampion) REFERENCES Champions(idChampion)
 );
-    
+ 
 CREATE TABLE if not exists Spells (
     idSpell INT PRIMARY KEY,
     idChampion INT,
@@ -44,10 +46,13 @@ create table if not exists Items(
     description varchar(90),
     attackDamage int,
     abilityPower int,
-    abilityHaste int,
+    health int,
     armor int,
     magicResist int,
-    lethality int);
+    criticalStrike int,
+    health int,
+    price int);
+
     
 create table if not exists Regions(
 	idRegion int primary key,
