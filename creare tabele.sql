@@ -3,7 +3,7 @@ create database if not exists game_manager;
 use game_manager;
 
 create table if not exists Champions (
-	idChampion int primary key,
+	idChampion int primary key auto_increment,
     name varchar(45),
     baseHealth int,
     baseMana int,
@@ -19,7 +19,7 @@ create table if not exists Champions (
     disenchantPrice int);
     
 CREATE TABLE if not exists Skins (
-    idSkin INT PRIMARY KEY,
+    idSkin INT PRIMARY KEY auto_increment,
     idChampion INT,
 	personalId INT,
     name VARCHAR(45),
@@ -28,25 +28,23 @@ CREATE TABLE if not exists Skins (
     disenchantOrangeEssence INT,
     FOREIGN KEY (idChampion) REFERENCES Champions(idChampion)
 );
- 
+
 CREATE TABLE if not exists Spells (
-    idSpell INT PRIMARY KEY,
+    idSpell INT PRIMARY KEY auto_increment,
     idChampion INT,
     name VARCHAR(45),
-    description VARCHAR(90),
+    description VARCHAR(2000),
     position INT,
-    baseAp INT,
-    baseAd INT,
     cooldown INT,
     FOREIGN KEY (idChampion) REFERENCES Champions(idChampion)
 );
+
 create table if not exists Items(
-	idItem int primary key,
+	idItem int primary key auto_increment,
     name varchar(45),
     description varchar(90),
     attackDamage int,
     abilityPower int,
-    health int,
     armor int,
     magicResist int,
     criticalStrike int,
@@ -54,18 +52,19 @@ create table if not exists Items(
     price int);
 
     
+    
 create table if not exists Regions(
-	idRegion int primary key,
+	idRegion int primary key auto_increment,
     name varchar(45),
     serverBase varchar(45),
     players int);
     
 create table if not exists Ranks(
-    idRank int primary key,
+    idRank int primary key auto_increment,
     name varchar(45));
     
 create table if not exists Clients(
-	idClient int primary key,
+	idClient int primary key auto_increment,
     region int,
     clientName varchar(45),
     password varchar(45),
@@ -79,18 +78,18 @@ create table if not exists Clients(
     foreign key (ranking) references Ranks(idRank));
     
 create table if not exists Friends(
-	idFriend int primary key,
+	idFriend int primary key auto_increment,
     friend1 int,
     friend2 int,
     foreign key (friend1) references Clients(idClient),
     foreign key (friend2) references Clients(idClient));
 
 create table if not exists Roles(
-	idRole int primary key,
+	idRole int primary key auto_increment,
     name varchar(45));
 
 create table if not exists Employees(
-	idEmployee int primary key,
+	idEmployee int primary key auto_increment,
     name varchar(45),
     idClient int,
     salary int,
@@ -101,40 +100,40 @@ create table if not exists Employees(
     foreign key (role) references Roles(idRole));
     
 create table if not exists LootSkins(
-	idLootSkin int primary key,
+	idLootSkin int primary key auto_increment,
     idSkin int,
     idClient int,
     foreign key (idSkin) references Skins(idSkin),
     foreign key (idClient) references Clients(idClient));
     
 create table if not exists LootChampions(
-	idLootSkin int primary key,
+	idLootSkin int primary key auto_increment,
     idChampion int,
     idClient int,
     foreign key (idClient) references Clients(idClient),
     foreign key (idChampion) references Champions(idChampion));
     
 create table if not exists Teams(
-	idTeam int primary key,
+	idTeam int primary key auto_increment,
     name varchar(45));
     
 create table if not exists Positions(
-	idPosition int primary key,
+	idPosition int primary key auto_increment,
     name varchar(45));
     
 create table if not exists Matches(
-	idMatch int primary key,
+	idMatch int primary key auto_increment,
     winner int,
     duration int,
     foreign key (winner) references Teams(idTeam));
     
 create table if not exists Runes(
-	idRune int primary key,
+	idRune int primary key auto_increment,
     name varchar(45),
     description varchar(90));
     
 CREATE TABLE if not exists PlayerMatch (
-    idPlayerMatch INT PRIMARY KEY,
+    idPlayerMatch INT PRIMARY KEY auto_increment,
     idPlayer INT,
     idMatch INT,
     primaryRunes INT,
@@ -167,14 +166,14 @@ CREATE TABLE if not exists PlayerMatch (
 );
 
 create table if not exists ClientSkins(
-	idClientSkin int primary key,
+	idClientSkin int primary key auto_increment,
     idClient int,
     idSkin int,
     foreign key (idClient) references Clients(idClient),
     foreign key (idSkin) references Skins(idSkin));
     
 create table if not exists ClientChampions(
-	idClientChampions int primary key,
+	idClientChampions int primary key auto_increment,
     idClient int,
     idChampion int,
     foreign key (idClient) references Clients(idClient),
@@ -186,15 +185,15 @@ create table if not exists Events (
     eventTime date);
     
 create table if not exists Updates (
-	idUpdate int primary key,
+	idUpdate int primary key auto_increment,
     updateNumber varchar(45));
     
 create table if not exists UpdatesType (
-	idUpdatesType int primary key,
+	idUpdatesType int primary key auto_increment,
     name varchar(45));
     
 create table if not exists UpdateChampion (
-	idUpdateChampion int primary key,
+	idUpdateChampion int primary key auto_increment,
     idChampion int,
     idUpdate int,
     updateType int,
@@ -204,7 +203,7 @@ create table if not exists UpdateChampion (
     
 
 create table if not exists UpdateSpell(
-	idUpdateSpell int primary key,
+	idUpdateSpell int primary key auto_increment,
     idSpell int,
     idUpdate int,
     updateType int,
@@ -214,7 +213,7 @@ create table if not exists UpdateSpell(
     
 
 create table if not exists UpdateItem (
-	idUpdateItem int primary key,
+	idUpdateItem int primary key auto_increment,
     idItem int,
     idUpdate int,
     updateType int,
