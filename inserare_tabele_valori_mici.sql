@@ -36,5 +36,6 @@ insert into regions values
 	(2, "EUW", "Amsterdam", 0),
 	(3, "NA", "Chicago", 0);
     
-    
+insert into UpdatesType(name) values 
+	("BUFF"), ("NERF"), ("REWORK");
     
