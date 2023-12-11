@@ -153,8 +153,15 @@ class LoginScreenState extends State<LoginScreen> {
                         )),
                         backgroundColor: MaterialStateProperty.all(Colors.red),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (controller1.text.isEmpty || controller2.text.isEmpty) {
+                          setState(() {
+                            error = true;
+                          });
+                          await Future.delayed(const Duration(seconds: 1));
+                          setState(() {
+                            error = false;
+                          });
                           return;
                         }
                         db.getConnection().then(
@@ -163,7 +170,6 @@ class LoginScreenState extends State<LoginScreen> {
                                 verifyLoginUser,
                                 [controller1.text, controller2.text],
                               ).then((results) async {
-                                print(results);
                                 if (results.isNotEmpty) {
                                   Navigator.pushNamed((context), HomeScreen.route);
                                 } else {
