@@ -74,6 +74,7 @@ create table if not exists Clients(
     orrangeEssence int,
     level int,
     ranking int,
+    statusMatches int,
     foreign key (region) references Regions(idRegion),
     foreign key (ranking) references Ranks(idRank));
     
