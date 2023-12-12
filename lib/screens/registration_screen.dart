@@ -5,20 +5,23 @@ import 'package:game_manager/services/connector.dart';
 import 'package:game_manager/services/sql_queries.dart';
 import 'package:mysql1/mysql1.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const route = '/';
+class RegistrationScreen extends StatefulWidget {
+  static const route = '/registration-screen';
 
-  const LoginScreen({super.key});
+  const RegistrationScreen({super.key});
   @override
-  LoginScreenState createState() => LoginScreenState();
+  RegistrationScreenState createState() => RegistrationScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class RegistrationScreenState extends State<RegistrationScreen> {
   var db = Connector();
   String randomSkinPath = '';
   bool isLoading = true;
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
+  TextEditingController controller3 = TextEditingController();
+  TextEditingController controller4 = TextEditingController();
+  String dropdownValue = 'na';
   bool error = false;
 
   void _getCustomer() async {
@@ -47,7 +50,6 @@ class LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: _getCustomer,
-
         child: const Icon(
           Icons.add,
         ),
@@ -72,7 +74,7 @@ class LoginScreenState extends State<LoginScreen> {
                     height: MediaQuery.sizeOf(context).height * 0.1,
                   ),
                   const Text(
-                    'Sign in with your Game Manager Account',
+                    'Register with your Game Manager Account',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -93,6 +95,32 @@ class LoginScreenState extends State<LoginScreen> {
                           error = false;
                         });
                       },
+                      decoration: const InputDecoration(
+                        hintText: 'NAME',
+                        hintStyle: TextStyle(
+                          fontWeight: FontWeight.normal,
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextField(
+                      controller: controller3,
+                      onChanged: (String value) {
+                        setState(() {
+                          error = false;
+                        });
+                      },
+                      obscureText: true,
+                      cursorColor: Colors.black,
+                      textAlign: TextAlign.center,
                       decoration: const InputDecoration(
                         hintText: 'USERNAME',
                         hintStyle: TextStyle(
@@ -133,6 +161,24 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  DropdownButton<String>(
+                    value: dropdownValue,
+                    items: <String>['eune', 'euw', 'na']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownValue = newValue!;
+                      });
+                    },
+                  ),
                   if (error)
                     const Center(
                       child: Text(
@@ -156,7 +202,7 @@ class LoginScreenState extends State<LoginScreen> {
                         backgroundColor: MaterialStateProperty.all(Colors.red),
                       ),
                       onPressed: () async {
-                        if (controller1.text.isEmpty || controller2.text.isEmpty) {
+                        if (controller1.text.isEmpty || controller2.text.isEmpty || controller3.text.isEmpty) {
                           setState(() {
                             error = true;
                           });
@@ -168,23 +214,23 @@ class LoginScreenState extends State<LoginScreen> {
                         }
                         db.getConnection().then(
                               (conn) => db.getQueryResults(
-                                conn,
-                                verifyLoginUser,
-                                [controller1.text, controller2.text],
-                              ).then((results) async {
-                                if (results.isNotEmpty) {
-                                  Navigator.pushNamed((context), HomeScreen.route);
-                                } else {
-                                  setState(() {
-                                    error = true;
-                                  });
-                                  await Future.delayed(const Duration(seconds: 1));
-                                  setState(() {
-                                    error = false;
-                                  });
-                                }
-                              }),
-                            );
+                            conn,
+                            callProcedura,
+                            [controller1.text, controller2.text,controller3.text,controller4.text],
+                          ).then((results) async {
+                            if (results.isNotEmpty) {
+                              Navigator.pushNamed((context), HomeScreen.route);
+                            } else {
+                              setState(() {
+                                error = true;
+                              });
+                              await Future.delayed(const Duration(seconds: 1));
+                              setState(() {
+                                error = false;
+                              });
+                            }
+                          }),
+                        );
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(
@@ -198,25 +244,6 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height * 0.05,
-                  ),
-                  Center(
-                    child: TextButton(
-
-                      onPressed: () async {
-                        Navigator.pushNamed((context), RegistrationScreen.route);
-                      },
-                      child: const Text(
-                        'Register an Account',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
