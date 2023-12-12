@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:game_manager/screens/home_screen.dart';
 import 'package:game_manager/screens/login_screen.dart';
+import 'package:game_manager/screens/registration_screen.dart';
 import 'package:mysql1/mysql1.dart';
 import 'services/sql_queries.dart';
 import 'services/connector.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         LoginScreen.route: (context) => const LoginScreen(),
         HomeScreen.route: (context) => const HomeScreen(),
+        RegistrationScreen.route: (context) => const RegistrationScreen(),
       },
       initialRoute: LoginScreen.route,
     );
