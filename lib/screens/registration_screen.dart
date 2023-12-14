@@ -3,7 +3,11 @@ import 'package:game_manager/screens/home_screen.dart';
 import 'package:game_manager/screens/registration_screen.dart';
 import 'package:game_manager/services/connector.dart';
 import 'package:game_manager/services/sql_queries.dart';
+import 'package:game_manager/widgets/skin_animation.dart';
+import 'package:game_manager/widgets/text_field_login.dart';
 import 'package:mysql1/mysql1.dart';
+
+import '../services/sql_data_retriver_registration.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const route = '/registration-screen';
@@ -14,46 +18,42 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class RegistrationScreenState extends State<RegistrationScreen> {
-  var db = Connector();
   String randomSkinPath = '';
   bool isLoading = true;
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
   TextEditingController controller3 = TextEditingController();
-  TextEditingController controller4 = TextEditingController();
-  String dropdownValue = 'na';
   bool error = false;
+  bool animation = true;
+  SqlDataRetriverRegistration sqlDataRetriverRegistration = SqlDataRetriverRegistration();
+  String dropdownValue = 'na';
 
-  void _getCustomer() async {
-    MySqlConnection conn = await db.getConnection();
-    Results results = await db.getQueryResults(conn, getRandomSkin);
-    setState(() {
-      isLoading = true;
-    });
-    for (var result in results) {
-      randomSkinPath = '${result[0]}_${result[1]}.jpg';
+  void _getCustomSkin() async {
+    while (animation) {
+      randomSkinPath = await sqlDataRetriverRegistration.getRandomSkinFromDatabase();
+      setState(() => isLoading = false);
+      await Future.delayed(const Duration(seconds: 3));
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _getCustomer();
+    _getCustomSkin();
+  }
+
+  @override
+  void dispose() {
+    animation = false;
+    controller1.dispose();
+    controller2.dispose();
+    controller3.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getCustomer,
-        child: const Icon(
-          Icons.add,
-        ),
-      ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -74,7 +74,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     height: MediaQuery.sizeOf(context).height * 0.1,
                   ),
                   const Text(
-                    'Register with your Game Manager Account',
+                    'Register an account to Game Manager!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -84,87 +84,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   SizedBox(
                     height: MediaQuery.sizeOf(context).height * 0.1,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      controller: controller1,
-                      cursorColor: Colors.black,
-                      textAlign: TextAlign.center,
-                      onChanged: (String value) {
-                        setState(() {
-                          error = false;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'NAME',
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                      ),
-                    ),
+                  TextFieldLogin(
+                    controller: controller1,
+                    hintText: 'USERNAME',
+                    hideText: false,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      controller: controller3,
-                      onChanged: (String value) {
-                        setState(() {
-                          error = false;
-                        });
-                      },
-                      obscureText: true,
-                      cursorColor: Colors.black,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: 'USERNAME',
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                      ),
-                    ),
+                  TextFieldLogin(
+                    controller: controller2,
+                    hintText: 'PASSWORD',
+                    hideText: true,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      controller: controller2,
-                      onChanged: (String value) {
-                        setState(() {
-                          error = false;
-                        });
-                      },
-                      obscureText: true,
-                      cursorColor: Colors.black,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: 'PASSWORD',
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                      ),
-                    ),
+                  TextFieldLogin(
+                    controller: controller1,
+                    hintText: 'REPEAT PASSWORD',
+                    hideText: true,
                   ),
                   DropdownButton<String>(
                     value: dropdownValue,
-                    items: <String>['eune', 'euw', 'na']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: <String>['eune', 'euw', 'na'].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -212,25 +149,25 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           });
                           return;
                         }
-                        db.getConnection().then(
+                        /*db.getConnection().then(
                               (conn) => db.getQueryResults(
-                            conn,
-                            callProcedura,
-                            [controller1.text, controller2.text,controller3.text,controller4.text],
-                          ).then((results) async {
-                            if (results.isNotEmpty) {
-                              Navigator.pushNamed((context), HomeScreen.route);
-                            } else {
-                              setState(() {
-                                error = true;
-                              });
-                              await Future.delayed(const Duration(seconds: 1));
-                              setState(() {
-                                error = false;
-                              });
-                            }
-                          }),
-                        );
+                                conn,
+                                callProcedura,
+                                [controller1.text, controller2.text, controller3.text, controller4.text],
+                              ).then((results) async {
+                                if (results.isNotEmpty) {
+                                  Navigator.pushNamed((context), HomeScreen.route);
+                                } else {
+                                  setState(() {
+                                    error = true;
+                                  });
+                                  await Future.delayed(const Duration(seconds: 1));
+                                  setState(() {
+                                    error = false;
+                                  });
+                                }
+                              }),
+                            ); */
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(
@@ -248,18 +185,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
           ),
-          Expanded(
-            child: Builder(builder: (context) {
-              if (isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return Image.asset(
-                'assets/skins/$randomSkinPath',
-                fit: BoxFit.cover,
-              );
-            }),
+          SkinAnimation(
+            isLoading: isLoading,
+            skinPath: randomSkinPath,
           ),
         ],
       ),

@@ -3,4 +3,4 @@ const String getRandomSkin = 'select champions.name, skins.personalId from skins
 
 const String callProcedura = 'call game_manager.creare_client(?, ?, ?, ?);';
 
-const String verifyLoginUser = 'select * from clients where clientName = "?" and password = "?"';
+const String verifyLoginUser = 'select * from clients where username = ? and password = ?';

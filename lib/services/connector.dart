@@ -1,4 +1,5 @@
 import 'package:mysql1/mysql1.dart';
+import 'package:mysql_client/mysql_client.dart';
 
 class Connector {
   static String host = 'localhost', user = 'root', password = 'TosaDumitru17', db = 'game_manager';
@@ -19,7 +20,6 @@ class Connector {
 
   Future<Results> getQueryResults(MySqlConnection conn, String query, [List<Object?>? params]) async {
     String newQuery = replacePlaceholders(query, params);
-    print(newQuery);
     final result1 = await conn.query(newQuery);
     final result2 = await conn.query(newQuery);
     return result2;
