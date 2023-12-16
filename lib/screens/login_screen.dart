@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:game_manager/models/client_model.dart';
 import 'package:game_manager/screens/registration_screen.dart';
-import 'package:game_manager/services/connector1.dart';
 import 'package:game_manager/services/sql_data_retriver_registration.dart';
-import 'package:game_manager/services/sql_queries.dart';
 import 'package:game_manager/widgets/button_text.dart';
 import 'package:game_manager/widgets/login_button.dart';
 import 'package:game_manager/widgets/lol_black_logo.dart';
 import 'package:game_manager/widgets/skin_animation.dart';
 import 'package:game_manager/widgets/text_field_login.dart';
+import 'package:provider/provider.dart';
+
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const route = '/';
@@ -39,7 +41,10 @@ class LoginScreenState extends State<LoginScreen> {
       (result) async {
         if (result) {
           print('Entered in homeScreen');
-          //Navigator.pushNamed(context, HomeScreen.route);
+          context.read<ClientModel>().setUser = controller1.text;
+          context.read<ClientModel>().setUser = controller1.text;
+          sqlDataRetriverRegistration.setClient(context, controller1.text);
+          Navigator.pushNamed(context, HomeScreen.route);
         } else {
           controller1.clear();
           controller2.clear();
