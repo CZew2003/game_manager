@@ -39,3 +39,9 @@ insert into regions values
 insert into UpdatesType(name) values 
 	("BUFF"), ("NERF"), ("REWORK");
     
+insert into rpshop values
+(1,10,250),(2,25,625),(3,50,1250),
+(4,100,2500),(5,200,5000),(6,430,10750);
+
+insert into riotbank values
+(1,3000);

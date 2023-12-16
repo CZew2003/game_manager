@@ -221,4 +221,15 @@ create table if not exists UpdateItem (
     foreign key (idUpdate) references Updates(idUpdate),
     foreign key (updateType) references UpdatesType(idUpdatesType));
     
+create table if not exists riotBank (
+	idBank int primary key auto_increment,
+    balance int);
+
+create table if not exists rpShop(
+	idShop int primary key auto_increment,
+    price int,
+    rpReceived int);
+
+    
+    
     
