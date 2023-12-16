@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:game_manager/models/client_model.dart';
 import 'package:game_manager/screens/home_screen.dart';
 import 'package:game_manager/screens/registration_screen.dart';
 import 'package:game_manager/services/connector.dart';
 import 'package:game_manager/services/sql_queries.dart';
-import 'package:mysql1/mysql1.dart';
+import 'package:game_manager/widgets/button_text.dart';
+import 'package:game_manager/widgets/login_button.dart';
+import 'package:game_manager/widgets/skin_animation.dart';
+import 'package:game_manager/widgets/text_field_login.dart';
+import 'package:provider/provider.dart';
+
+import '../services/sql_data_retriver_registration.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const route = '/registration-screen';
@@ -14,46 +21,75 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class RegistrationScreenState extends State<RegistrationScreen> {
-  var db = Connector();
   String randomSkinPath = '';
   bool isLoading = true;
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
   TextEditingController controller3 = TextEditingController();
-  TextEditingController controller4 = TextEditingController();
-  String dropdownValue = 'na';
   bool error = false;
+  bool animation = true;
+  SqlDataRetriverRegistration sqlDataRetriverRegistration = SqlDataRetriverRegistration();
+  String? region = 'Eune';
+  List<String> regions = ['Eune', 'Euw', 'Na'];
 
-  void _getCustomer() async {
-    MySqlConnection conn = await db.getConnection();
-    Results results = await db.getQueryResults(conn, getRandomSkin);
-    setState(() {
-      isLoading = true;
-    });
-    for (var result in results) {
-      randomSkinPath = '${result[0]}_${result[1]}.jpg';
+  void _getCustomSkin() async {
+    while (animation) {
+      randomSkinPath = await sqlDataRetriverRegistration.getRandomSkinFromDatabase();
+      setState(() => isLoading = false);
+      await Future.delayed(const Duration(seconds: 3));
     }
-    setState(() {
-      isLoading = false;
+  }
+
+  Future<bool> _getRegistrationVerify() async {
+    bool result;
+    if (controller2.text != controller3.text) {
+      result = false;
+    } else {
+      result = await sqlDataRetriverRegistration.registerAccount(
+        controller1.text,
+        controller2.text,
+        region ?? '',
+      );
+    }
+    return result;
+  }
+
+  Future<void> _verifyRegistration() async {
+    await _getRegistrationVerify().then((result) async {
+      print(result);
+      if (result) {
+        context.read<ClientModel>().setUser = controller1.text;
+        Navigator.popAndPushNamed(context, HomeScreen.route);
+      } else {
+        controller1.clear();
+        controller2.clear();
+        controller3.clear();
+        setState(() => region = 'Eune');
+        setState(() => error = true);
+        await Future.delayed(const Duration(seconds: 2));
+        setState(() => error = false);
+      }
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _getCustomer();
+    _getCustomSkin();
+  }
+
+  @override
+  void dispose() {
+    animation = false;
+    controller1.dispose();
+    controller2.dispose();
+    controller3.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getCustomer,
-        child: const Icon(
-          Icons.add,
-        ),
-      ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -74,7 +110,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     height: MediaQuery.sizeOf(context).height * 0.1,
                   ),
                   const Text(
-                    'Register with your Game Manager Account',
+                    'Register an account to Game Manager!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -84,100 +120,45 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   SizedBox(
                     height: MediaQuery.sizeOf(context).height * 0.1,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      controller: controller1,
-                      cursorColor: Colors.black,
-                      textAlign: TextAlign.center,
-                      onChanged: (String value) {
-                        setState(() {
-                          error = false;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'NAME',
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                      ),
-                    ),
+                  TextFieldLogin(
+                    controller: controller1,
+                    hintText: 'USERNAME',
+                    hideText: false,
+                  ),
+                  TextFieldLogin(
+                    controller: controller2,
+                    hintText: 'PASSWORD',
+                    hideText: true,
+                  ),
+                  TextFieldLogin(
+                    controller: controller3,
+                    hintText: 'REPEAT PASSWORD',
+                    hideText: true,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      controller: controller3,
-                      onChanged: (String value) {
-                        setState(() {
-                          error = false;
-                        });
-                      },
-                      obscureText: true,
-                      cursorColor: Colors.black,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: 'USERNAME',
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
-                        ),
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Center(
+                      child: Wrap(
+                        spacing: 20,
+                        children: regions.map((value) {
+                          return FilterChip(
+                              showCheckmark: false,
+                              selectedColor: Colors.lightBlue,
+                              label: Text(
+                                value,
+                                style: TextStyle(
+                                  color: value == region ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              selected: value == region,
+                              onSelected: (selected) {
+                                setState(() {
+                                  region = value;
+                                });
+                              });
+                        }).toList(),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextField(
-                      controller: controller2,
-                      onChanged: (String value) {
-                        setState(() {
-                          error = false;
-                        });
-                      },
-                      obscureText: true,
-                      cursorColor: Colors.black,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: 'PASSWORD',
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                      ),
-                    ),
-                  ),
-                  DropdownButton<String>(
-                    value: dropdownValue,
-                    items: <String>['eune', 'euw', 'na']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
-                    },
                   ),
                   if (error)
                     const Center(
@@ -193,73 +174,21 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   SizedBox(
                     height: MediaQuery.sizeOf(context).height * 0.08,
                   ),
-                  Center(
-                    child: TextButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        )),
-                        backgroundColor: MaterialStateProperty.all(Colors.red),
-                      ),
-                      onPressed: () async {
-                        if (controller1.text.isEmpty || controller2.text.isEmpty || controller3.text.isEmpty) {
-                          setState(() {
-                            error = true;
-                          });
-                          await Future.delayed(const Duration(seconds: 1));
-                          setState(() {
-                            error = false;
-                          });
-                          return;
-                        }
-                        db.getConnection().then(
-                              (conn) => db.getQueryResults(
-                            conn,
-                            callProcedura,
-                            [controller1.text, controller2.text,controller3.text,controller4.text],
-                          ).then((results) async {
-                            if (results.isNotEmpty) {
-                              Navigator.pushNamed((context), HomeScreen.route);
-                            } else {
-                              setState(() {
-                                error = true;
-                              });
-                              await Future.delayed(const Duration(seconds: 1));
-                              setState(() {
-                                error = false;
-                              });
-                            }
-                          }),
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 20,
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                  LoginButton(onPressed: _verifyRegistration),
+                  SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+                  ButtonText(
+                    toggleOnPressed: () {
+                      Navigator.pop(context);
+                    },
+                    text: 'Go back to login',
                   ),
                 ],
               ),
             ),
           ),
-          Expanded(
-            child: Builder(builder: (context) {
-              if (isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return Image.asset(
-                'assets/skins/$randomSkinPath',
-                fit: BoxFit.cover,
-              );
-            }),
+          SkinAnimation(
+            isLoading: isLoading,
+            skinPath: randomSkinPath,
           ),
         ],
       ),
