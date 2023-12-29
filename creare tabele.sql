@@ -66,17 +66,17 @@ create table if not exists Ranks(
 create table if not exists Clients(
 	idClient int primary key auto_increment,
     region int,
-    clientName varchar(45),
-    password varchar(45),
     username varchar(45),
+    password varchar(45),
     blueEssence int,
     riotPoints int,
     orrangeEssence int,
-    level int,
     ranking int,
     statusMatches int,
     foreign key (region) references Regions(idRegion),
     foreign key (ranking) references Ranks(idRank));
+
+
     
 create table if not exists Friends(
 	idFriend int primary key auto_increment,
@@ -223,3 +223,11 @@ create table if not exists UpdateItem (
     foreign key (updateType) references UpdatesType(idUpdatesType));
     
     
+create table if not exists riotBank (
+	idBank int primary key auto_increment,
+    balance int);
+
+create table if not exists rpShop(
+	idShop int primary key auto_increment,
+    price int,
+    rpReceived int);
