@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/models/client_model.dart';
-import 'package:game_manager/widgets/bottom_navigation.dart';
 import 'package:provider/provider.dart';
 
-class LootScreen extends StatefulWidget {
-  static const route = '/Loot-Screen';
+import '../models/client_model.dart';
+import '../widgets/bottom_navigation.dart';
 
+class LootScreen extends StatefulWidget {
   const LootScreen({super.key});
+  static const String route = '/Loot-Screen';
 
   @override
   State<LootScreen> createState() => _LootScreenState();
@@ -17,7 +17,7 @@ class _LootScreenState extends State<LootScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomNavigation(),
-      body: Text(context.watch<ClientModel>().getUsername),
+      body: Text(context.watch<ClientModel>().user),
     );
   }
 }

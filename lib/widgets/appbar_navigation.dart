@@ -1,23 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:game_manager/constants/color_constants.dart';
-import 'package:provider/provider.dart';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../constants/color_constants.dart';
 import '../models/client_model.dart';
 
 class AppBarNavigation extends StatelessWidget {
   const AppBarNavigation({super.key, required this.toggleOnTap});
 
-  final Function() toggleOnTap;
+  final void Function() toggleOnTap;
 
   @override
   PreferredSizeWidget build(BuildContext context) {
     return AppBar(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            // bottomRight: Radius.circular(28),
-            // bottomLeft: Radius.circular(28),
-            ),
-      ),
+      shape: const RoundedRectangleBorder(),
       backgroundColor: appBarColor,
       surfaceTintColor: appBarColor,
       leading: IconButton(
@@ -25,15 +22,52 @@ class AppBarNavigation extends StatelessWidget {
           Icons.arrow_back,
           color: Colors.black,
         ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
+        onPressed: toggleOnTap,
       ),
       title: const Text(
         'Game Manager',
       ),
       centerTitle: true,
-      actions: [
+      actions: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                'assets/currencies/blueEssence.png',
+                height: 30,
+                width: 30,
+              ),
+              Text('${context.watch<ClientModel>().blueEssence}'),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                'assets/currencies/orangeEssence.png',
+                height: 30,
+                width: 30,
+              ),
+              Text('${context.watch<ClientModel>().orangeEssence}'),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                'assets/currencies/riotPoints.png',
+                height: 30,
+                width: 30,
+              ),
+              Text('${context.watch<ClientModel>().riotPoints}'),
+            ],
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: IconButton(

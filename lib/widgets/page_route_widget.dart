@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PageRouteWidget extends PageRouteBuilder {
-  final Widget screen;
-
+class PageRouteWidget extends PageRouteBuilder<dynamic> {
   PageRouteWidget({required this.screen})
       : super(
           pageBuilder: (
@@ -24,4 +22,5 @@ class PageRouteWidget extends PageRouteBuilder {
             );
           },
         );
+  final Widget screen;
 }

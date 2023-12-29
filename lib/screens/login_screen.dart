@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/models/client_model.dart';
-import 'package:game_manager/screens/registration_screen.dart';
-import 'package:game_manager/services/sql_data_retriver_registration.dart';
-import 'package:game_manager/widgets/button_text.dart';
-import 'package:game_manager/widgets/login_button.dart';
-import 'package:game_manager/widgets/lol_black_logo.dart';
-import 'package:game_manager/widgets/skin_animation.dart';
-import 'package:game_manager/widgets/text_field_login.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/snack_bar.dart';
+import '../models/client_model.dart';
+import '../services/sql_data_retriver_registration.dart';
+import '../widgets/button_text.dart';
+import '../widgets/login_button.dart';
+import '../widgets/lol_black_logo.dart';
+import '../widgets/skin_animation.dart';
+import '../widgets/text_field_login.dart';
 import 'home_screen.dart';
+import 'registration_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const route = '/';
-
   const LoginScreen({super.key});
+  static const String route = '/';
   @override
   LoginScreenState createState() => LoginScreenState();
 }
@@ -24,33 +24,28 @@ class LoginScreenState extends State<LoginScreen> {
   bool isLoading = true;
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
-  bool error = false;
   bool animation = true;
   SqlDataRetriverRegistration sqlDataRetriverRegistration = SqlDataRetriverRegistration();
 
-  void _getCustomSkin() async {
+  Future<void> _getCustomSkin() async {
     while (animation) {
       randomSkinPath = await sqlDataRetriverRegistration.getRandomSkinFromDatabase();
       setState(() => isLoading = false);
-      await Future.delayed(const Duration(seconds: 3));
+      await Future<void>.delayed(const Duration(seconds: 3));
     }
   }
 
-  void _verifyAccount() async {
+  Future<void> _verifyAccount() async {
     await sqlDataRetriverRegistration.verifyAccount(controller1.text, controller2.text).then(
-      (result) async {
+      (bool result) async {
         if (result) {
-          print('Entered in homeScreen');
-          context.read<ClientModel>().setUser = controller1.text;
-          context.read<ClientModel>().setUser = controller1.text;
+          context.read<ClientModel>().user = controller1.text;
           sqlDataRetriverRegistration.setClient(context, controller1.text);
           Navigator.pushNamed(context, HomeScreen.route);
         } else {
           controller1.clear();
           controller2.clear();
-          setState(() => error = true);
-          await Future.delayed(const Duration(seconds: 2));
-          setState(() => error = false);
+          showSnackBar(context, 'Invalid inputs');
         }
       },
     );
@@ -75,13 +70,13 @@ class LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        children: <Widget>[
           SizedBox(
             width: MediaQuery.sizeOf(context).width * 0.3,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
               child: ListView(
-                children: [
+                children: <Widget>[
                   const LolBlackLogo(),
                   SizedBox(height: MediaQuery.sizeOf(context).height * 0.1),
                   const Text(
@@ -103,17 +98,6 @@ class LoginScreenState extends State<LoginScreen> {
                     hintText: 'PASSWORD',
                     hideText: true,
                   ),
-                  if (error)
-                    const Center(
-                      child: Text(
-                        'Try again with other values!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
                   SizedBox(height: MediaQuery.sizeOf(context).height * 0.08),
                   LoginButton(
                     onPressed: _verifyAccount,

@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/models/champion_model.dart';
-import 'package:game_manager/screens/champion_info_screen.dart';
+import '../models/champion_model.dart';
 
 class ChampionWidget extends StatelessWidget {
-  const ChampionWidget({super.key, required this.champion});
+  const ChampionWidget({super.key, required this.champion, required this.toggleOnPressed});
 
   final ChampionModel champion;
-
+  final void Function() toggleOnPressed;
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         MaterialButton(
-          padding: const EdgeInsets.all(0),
+          padding: EdgeInsets.zero,
           hoverColor: Colors.transparent,
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
-          onPressed: () {
-            Navigator.pushNamed(context, ChampionInfoScreen.route, arguments: champion.name);
-          },
+          onPressed: toggleOnPressed,
           child: Opacity(
             opacity: champion.acquired ? 1 : 0.7,
             child: AspectRatio(
