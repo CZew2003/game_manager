@@ -13,7 +13,7 @@ class SkinAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Builder(builder: (context) {
+      child: Builder(builder: (BuildContext context) {
         if (isLoading) {
           return const Center(
             child: CircularProgressIndicator(),

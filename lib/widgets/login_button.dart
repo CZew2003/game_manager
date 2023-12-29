@@ -6,7 +6,7 @@ class LoginButton extends StatelessWidget {
     required this.onPressed,
   });
 
-  final Function() onPressed;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {

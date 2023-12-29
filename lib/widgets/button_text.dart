@@ -7,7 +7,7 @@ class ButtonText extends StatelessWidget {
     required this.text,
   });
 
-  final Function() toggleOnPressed;
+  final void Function() toggleOnPressed;
   final String text;
 
   @override
@@ -16,7 +16,7 @@ class ButtonText extends StatelessWidget {
       child: TextButton(
         onPressed: toggleOnPressed,
         style: const ButtonStyle(
-          overlayColor: MaterialStatePropertyAll(Colors.transparent),
+          overlayColor: MaterialStatePropertyAll<Color>(Colors.transparent),
         ),
         child: Text(
           text,

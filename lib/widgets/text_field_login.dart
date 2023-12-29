@@ -33,9 +33,7 @@ class _TextFieldLoginState extends State<TextFieldLogin> {
           hintStyle: const TextStyle(
             fontWeight: FontWeight.normal,
           ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),
-          ),
+          enabledBorder: const UnderlineInputBorder(),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.blue, width: 1.5),
           ),
@@ -43,7 +41,7 @@ class _TextFieldLoginState extends State<TextFieldLogin> {
               ? null
               : IconButton(
                   style: const ButtonStyle(
-                    overlayColor: MaterialStatePropertyAll(Colors.transparent),
+                    overlayColor: MaterialStatePropertyAll<Color>(Colors.transparent),
                   ),
                   onPressed: () {
                     setState(() {

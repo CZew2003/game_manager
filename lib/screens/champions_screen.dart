@@ -1,52 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/models/client_model.dart';
-import 'package:game_manager/widgets/appbar_navigation.dart';
-import 'package:game_manager/widgets/bottom_navigation.dart';
-import 'package:game_manager/widgets/champion_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/color_constants.dart';
 import '../models/champion_model.dart';
+import '../models/client_model.dart';
+import '../services/sql_data_retriver_champions.dart';
+import '../widgets/appbar_navigation.dart';
+import '../widgets/champion_widget.dart';
+import 'champion_info_screen.dart';
 
 class ChampionsScreen extends StatefulWidget {
-  static const route = '/Champions-Screen';
-
   const ChampionsScreen({super.key});
+  static const String route = '/Champions-Screen';
 
   @override
   State<ChampionsScreen> createState() => _ChampionsScreenState();
 }
 
 class _ChampionsScreenState extends State<ChampionsScreen> {
-  List<ChampionModel> champions = [
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: true),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-    ChampionModel(name: 'Irelia', acquired: false),
-  ];
+  List<ChampionModel> champions = <ChampionModel>[];
+  SqlDataRetriverChampions sqlDataRetriverChampions = SqlDataRetriverChampions();
+  bool isLoading = true;
+
+  Future<void> fetchData() async {
+    champions = await sqlDataRetriverChampions.getChampionsFromClient(
+      context.read<ClientModel>().user,
+    );
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +45,10 @@ class _ChampionsScreenState extends State<ChampionsScreen> {
             Navigator.pop(context);
           },
         ).build(context),
-        // bottomNavigationBar: const BottomNavigation(
-        //   selectedValue: ChampionsScreen.route,
-        // ),
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
+              colors: <Color>[
                 appBarColor,
                 bottomAppBarColor,
               ],
@@ -70,21 +56,42 @@ class _ChampionsScreenState extends State<ChampionsScreen> {
               end: Alignment.bottomCenter,
             ),
           ),
-          child: GridView.count(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 8,
-            childAspectRatio: (1 / 0.85),
-            shrinkWrap: true,
-            crossAxisCount: 6,
-            children: champions
-                .map(
-                  (champion) => ChampionWidget(champion: champion),
-                )
-                .toList(),
+          child: Builder(
+            builder: (BuildContext context) {
+              if (isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return GridView.count(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1 / 0.85,
+                shrinkWrap: true,
+                crossAxisCount: 6,
+                children: champions
+                    .map(
+                      (ChampionModel champion) => ChampionWidget(
+                        champion: champion,
+                        toggleOnPressed: () async {
+                          final bool result = (await Navigator.pushNamed(
+                            context,
+                            ChampionInfoScreen.route,
+                            arguments: champion.name,
+                          ))! as bool;
+                          setState(() {
+                            champions[champions.indexOf(champion)].acquired = result;
+                          });
+                        },
+                      ),
+                    )
+                    .toList(),
+              );
+            },
           ),
         ));
   }

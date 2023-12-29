@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/models/client_model.dart';
-import 'package:game_manager/screens/home_screen.dart';
-import 'package:game_manager/screens/registration_screen.dart';
-import 'package:game_manager/services/connector.dart';
-import 'package:game_manager/services/sql_queries.dart';
-import 'package:game_manager/widgets/button_text.dart';
-import 'package:game_manager/widgets/login_button.dart';
-import 'package:game_manager/widgets/skin_animation.dart';
-import 'package:game_manager/widgets/text_field_login.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/snack_bar.dart';
+import '../models/client_model.dart';
 import '../services/sql_data_retriver_registration.dart';
+import '../widgets/button_text.dart';
+import '../widgets/login_button.dart';
+import '../widgets/skin_animation.dart';
+import '../widgets/text_field_login.dart';
+import 'home_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  static const route = '/registration-screen';
-
   const RegistrationScreen({super.key});
+  static const String route = '/registration-screen';
   @override
   RegistrationScreenState createState() => RegistrationScreenState();
 }
@@ -26,17 +23,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
   TextEditingController controller3 = TextEditingController();
-  bool error = false;
   bool animation = true;
   SqlDataRetriverRegistration sqlDataRetriverRegistration = SqlDataRetriverRegistration();
   String? region = 'Eune';
-  List<String> regions = ['Eune', 'Euw', 'Na'];
+  List<String> regions = <String>['Eune', 'Euw', 'Na'];
 
-  void _getCustomSkin() async {
+  Future<void> _getCustomSkin() async {
     while (animation) {
       randomSkinPath = await sqlDataRetriverRegistration.getRandomSkinFromDatabase();
       setState(() => isLoading = false);
-      await Future.delayed(const Duration(seconds: 3));
+      await Future<void>.delayed(const Duration(seconds: 3));
     }
   }
 
@@ -55,19 +51,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Future<void> _verifyRegistration() async {
-    await _getRegistrationVerify().then((result) async {
-      print(result);
+    await _getRegistrationVerify().then((bool result) async {
       if (result) {
-        context.read<ClientModel>().setUser = controller1.text;
+        context.read<ClientModel>().user = controller1.text;
+        sqlDataRetriverRegistration.setClient(context, controller1.text);
         Navigator.popAndPushNamed(context, HomeScreen.route);
       } else {
         controller1.clear();
         controller2.clear();
         controller3.clear();
         setState(() => region = 'Eune');
-        setState(() => error = true);
-        await Future.delayed(const Duration(seconds: 2));
-        setState(() => error = false);
+        showSnackBar(context, 'Invalid inputs');
       }
     });
   }
@@ -92,13 +86,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        children: <Widget>[
           SizedBox(
             width: MediaQuery.sizeOf(context).width * 0.3,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
               child: ListView(
-                children: [
+                children: <Widget>[
                   Align(
                     alignment: Alignment.centerLeft,
                     child: SizedBox(
@@ -140,7 +134,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     child: Center(
                       child: Wrap(
                         spacing: 20,
-                        children: regions.map((value) {
+                        children: regions.map((String value) {
                           return FilterChip(
                               showCheckmark: false,
                               selectedColor: Colors.lightBlue,
@@ -151,7 +145,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                               ),
                               selected: value == region,
-                              onSelected: (selected) {
+                              onSelected: (bool selected) {
                                 setState(() {
                                   region = value;
                                 });
@@ -160,17 +154,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                   ),
-                  if (error)
-                    const Center(
-                      child: Text(
-                        'Try again with other values!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
                   SizedBox(
                     height: MediaQuery.sizeOf(context).height * 0.08,
                   ),

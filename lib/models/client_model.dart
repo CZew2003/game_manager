@@ -1,12 +1,6 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class ClientModel with ChangeNotifier {
-  late String _username;
-  late Role _role;
-  late int _orangeEssence;
-  late int _blueEssence;
-  late int _riotPoints;
   ClientModel() {
     _username = '';
     _role = Role.client;
@@ -14,8 +8,13 @@ class ClientModel with ChangeNotifier {
     _blueEssence = 0;
     _riotPoints = 0;
   }
+  late String _username;
+  late Role _role;
+  late int _orangeEssence;
+  late int _blueEssence;
+  late int _riotPoints;
 
-  set setUser(String username) {
+  set user(String username) {
     _username = username;
     notifyListeners();
   }
@@ -25,32 +24,32 @@ class ClientModel with ChangeNotifier {
     notifyListeners();
   }
 
-  String get getUsername => _username;
+  String get user => _username;
 
-  set setRole(Role role) {
+  set role(Role role) {
     _role = role;
     notifyListeners();
   }
 
-  Role get getRole => _role;
+  Role get role => _role;
 
-  int get getBlueEssence => _blueEssence;
+  int get blueEssence => _blueEssence;
 
-  int get getRiotPoint => _riotPoints;
+  int get riotPoints => _riotPoints;
 
-  int get getOrangeEssence => _orangeEssence;
+  int get orangeEssence => _orangeEssence;
 
-  set setBlueEssence(int blueEssence) {
+  set blueEssence(int blueEssence) {
     _blueEssence = blueEssence;
     notifyListeners();
   }
 
-  set setOrangeEssence(int orangeEssence) {
+  set orangeEssence(int orangeEssence) {
     _orangeEssence = orangeEssence;
     notifyListeners();
   }
 
-  set setRiotPoints(int riotPoints) {
+  set riotPoints(int riotPoints) {
     _riotPoints = riotPoints;
     notifyListeners();
   }
