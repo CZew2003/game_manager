@@ -286,3 +286,7 @@ const String buySkinShardProcedure = 'call game_manager.BuySkinWithShard(?, ?);'
 const String updateSkinProcedure = 'call game_manager.UpdateSkin(?, ?, ?, ?);';
 
 const String updateChampionProcedure = 'call game_manager.UpdateChampion(?, ?, ?, ?);';
+
+const String addEmployeeProcedure = 'call game_manager.AddEmployee(?, ?, ?, ?, ?);';
+
+const String buyRpProcedure = 'call game_manager.buy_rp(?, ?);';

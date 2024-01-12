@@ -42,18 +42,23 @@ class _EmployeePanelState extends State<EmployeePanel> {
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                  children: <Widget>[
                     const Text(
                       'Employee Panel',
                       style: TextStyle(fontSize: 32),
                     ),
                     TextButton(
-                      onPressed: () {
-                        showDialog(
+                      onPressed: () async {
+                        final EmployeeModel? newEmployee = await showDialog<EmployeeModel>(
                             context: context,
-                            builder: (context) {
-                              return AddEmployeeDialog();
+                            builder: (BuildContext context) {
+                              return const AddEmployeeDialog();
                             });
+                        if (newEmployee != null) {
+                          setState(() {
+                            employees.add(newEmployee);
+                          });
+                        }
                       },
                       style: const ButtonStyle(
                         overlayColor: MaterialStatePropertyAll<Color>(Colors.transparent),

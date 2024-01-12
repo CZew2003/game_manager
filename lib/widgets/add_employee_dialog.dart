@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../constants/snack_bar.dart';
+import '../models/employee_model.dart';
+import '../services/sql_data_retriever_admin.dart';
 import 'text_field_login.dart';
 
 class AddEmployeeDialog extends StatefulWidget {
@@ -11,17 +14,49 @@ class AddEmployeeDialog extends StatefulWidget {
 }
 
 class _AddEmployeeDialogState extends State<AddEmployeeDialog> {
-  final TextEditingController controllerIdClient = TextEditingController();
+  final TextEditingController controllerClientName = TextEditingController();
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerSalary = TextEditingController();
   final TextEditingController controllerHoursMonthly = TextEditingController();
-  final TextEditingController controllerExpirationDate = TextEditingController();
   DateTime day = DateTime.now();
+  SqlDataRetrieverAdmin sqlDataRetrieverAdmin = SqlDataRetrieverAdmin();
+
+  @override
+  void dispose() {
+    controllerClientName.dispose();
+    controllerSalary.dispose();
+    controllerName.dispose();
+    controllerHoursMonthly.dispose();
+    super.dispose();
+  }
+
+  Future<void> onPressed() async {
+    final EmployeeModel employeeModel = EmployeeModel(
+      name: controllerName.text,
+      username: controllerClientName.text,
+      salary: controllerSalary.text,
+      hoursMonthly: int.parse(controllerHoursMonthly.text),
+      expirationDate: '${day.year}-${day.month}-${day.day}',
+    );
+    await sqlDataRetrieverAdmin
+        .createEmployee(
+      employeeModel.name,
+      employeeModel.username,
+      int.parse(employeeModel.salary),
+      employeeModel.hoursMonthly,
+      '${day.year}-${day.month}-${day.day}',
+    )
+        .then((_) {
+      Navigator.pop(context, employeeModel);
+      showSnackBar(context, 'Employee Added');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: StatefulBuilder(
-        builder: (context, setstate) => Padding(
+        builder: (BuildContext context, StateSetter setState) => Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -34,7 +69,7 @@ class _AddEmployeeDialogState extends State<AddEmployeeDialog> {
                 width: 400,
                 child: Column(
                   children: <Widget>[
-                    TextFieldLogin(controller: controllerIdClient, hintText: 'Client ID', hideText: false),
+                    TextFieldLogin(controller: controllerClientName, hintText: 'Client Name', hideText: false),
                     TextFieldLogin(controller: controllerName, hintText: 'Admin Name', hideText: false),
                     TextFieldLogin(controller: controllerSalary, hintText: 'Salary', hideText: false),
                     TextFieldLogin(controller: controllerHoursMonthly, hintText: 'Hours Monthly', hideText: false),
@@ -50,7 +85,7 @@ class _AddEmployeeDialogState extends State<AddEmployeeDialog> {
                                 return Dialog(
                                   child: StatefulBuilder(
                                     builder: (BuildContext context, StateSetter setState) => SizedBox(
-                                      height: 400,
+                                      height: 450,
                                       width: 450,
                                       child: Column(
                                         children: <Widget>[
@@ -61,7 +96,7 @@ class _AddEmployeeDialogState extends State<AddEmployeeDialog> {
                                                   const HeaderStyle(formatButtonVisible: false, titleCentered: true),
                                               firstDay: DateTime.utc(2010, 10, 16),
                                               lastDay: DateTime.utc(2030, 3, 14),
-                                              focusedDay: DateTime.now(),
+                                              focusedDay: selectedDay,
                                               selectedDayPredicate: (DateTime day) => isSameDay(day, selectedDay),
                                               onDaySelected: (DateTime day, DateTime focusedDay) {
                                                 setState(() {
@@ -106,9 +141,7 @@ class _AddEmployeeDialogState extends State<AddEmployeeDialog> {
                 height: 20,
               ),
               FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: onPressed,
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
                     child: Text(

@@ -211,4 +211,27 @@ class SqlDataRetrieverAdmin {
       await conn.close();
     });
   }
+
+  Future<void> createEmployee(
+    String name,
+    String clientName,
+    int salary,
+    int hoursMonthly,
+    String expirationDate,
+  ) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(addEmployeeProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[
+          name,
+          clientName,
+          salary.toString(),
+          hoursMonthly.toString(),
+          expirationDate,
+        ]);
+      });
+      await conn.close();
+    });
+  }
 }
