@@ -282,3 +282,7 @@ const String buyChampShardWithRPProcedure = 'call game_manager.BuyChampShardWith
 const String buySkinShardWithRPProcedure = 'call game_manager.BuySkinShardWithRP(?);';
 
 const String buySkinShardProcedure = 'call game_manager.BuySkinWithShard(?, ?);';
+
+const String updateSkinProcedure = 'call game_manager.UpdateSkin(?, ?, ?, ?);';
+
+const String updateChampionProcedure = 'call game_manager.UpdateChampion(?, ?, ?, ?);';

@@ -194,9 +194,20 @@ class SqlDataRetrieverAdmin {
 
   Future<void> generateMatch() async {
     final Connector db = Connector();
-    await db.getConnection().then((conn) async {
+    await db.getConnection().then((MySQLConnection conn) async {
       await conn.connect();
       await conn.execute(generateMatchProcedure);
+      await conn.close();
+    });
+  }
+
+  Future<void> updateSkin(String name, int rp, int priceOE, int disenchantOE) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(updateSkinProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[name, rp.toString(), priceOE.toString(), disenchantOE.toString()]);
+      });
       await conn.close();
     });
   }
