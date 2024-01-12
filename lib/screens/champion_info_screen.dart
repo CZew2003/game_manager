@@ -6,7 +6,7 @@ import '../constants/color_constants.dart';
 import '../constants/snack_bar.dart';
 import '../models/champion_info_model.dart';
 import '../models/client_model.dart';
-import '../services/sql_data_retriver_champions.dart';
+import '../services/sql_data_retriever_champions.dart';
 import '../widgets/appbar_navigation.dart';
 import '../widgets/carousel_slide_show.dart';
 import '../widgets/show_champions_stats.dart';

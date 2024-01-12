@@ -75,6 +75,17 @@ class SqlDataRetriverRegistration {
       final PreparedStmt stmt = await conn.prepare(getClientsInformations);
       await stmt.execute(<String>[username]).then((IResultSet results) {
         for (final ResultSetRow result in results.rows) {
+          final String? value = result.colAt(9);
+          switch (value) {
+            case null:
+              context.read<ClientModel>().role = Role.client;
+            case 'admin':
+              context.read<ClientModel>().role = Role.admin;
+            case 'super_admin':
+              context.read<ClientModel>().role = Role.superAdmin;
+            default:
+              context.read<ClientModel>().role = Role.client;
+          }
           context.read<ClientModel>().blueEssence = int.parse(result.colAt(4)!);
           context.read<ClientModel>().orangeEssence = int.parse(result.colAt(6)!);
           context.read<ClientModel>().riotPoints = int.parse(result.colAt(5)!);

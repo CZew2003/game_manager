@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/widgets/stats_widget.dart';
 
 import '../models/item_model.dart';
+import 'stats_widget.dart';
 
 class DialogItem extends StatelessWidget {
   const DialogItem({
@@ -21,7 +21,7 @@ class DialogItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               StatsWidget(statName: 'Name', statValue: item.name, fontSize: 16),
               StatsWidget(statName: 'Description', statValue: item.description, fontSize: 16),
               StatsWidget(statName: 'Attack Damage', statValue: item.attackDamage.toString(), fontSize: 16),

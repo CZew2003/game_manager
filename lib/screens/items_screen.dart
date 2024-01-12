@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/color_constants.dart';
 import '../models/item_model.dart';
-import '../services/sql_data_retriver_items.dart';
+import '../services/sql_data_retriever_items.dart';
 import '../widgets/appbar_navigation.dart';
 import '../widgets/dialog_item.dart';
 

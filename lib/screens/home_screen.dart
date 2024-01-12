@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/color_constants.dart';
+import '../constants/snack_bar.dart';
 import '../models/client_info_model.dart';
 import '../models/client_model.dart';
-import '../services/sql_dta_retriver_client.dart';
+import '../services/sql_data_retriever_client.dart';
 import '../widgets/appbar_navigation.dart';
 import '../widgets/bottom_navigation.dart';
+import '../widgets/friends_widget.dart';
+import '../widgets/show_client_infos.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   SqlDataRetriverClient sqlDataRetriverClient = SqlDataRetriverClient();
   late ClientInfoModel clientInfoModel;
   bool isLoading = true;
+  bool showTextField = false;
+  TextEditingController controller = TextEditingController();
 
   Future<void> fetchData() async {
     setState(() => isLoading = true);
@@ -27,10 +32,30 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => isLoading = false);
   }
 
+  Future<void> addFriend(String friend) async {
+    if (friend == context.read<ClientModel>().user) {
+      showSnackBar(context, 'Cannot add yoursef');
+      return;
+    }
+    await sqlDataRetriverClient.addFriend(context.read<ClientModel>().user, friend).then((bool result) {
+      if (result) {
+        setState(() => clientInfoModel.friends.add(friend));
+      } else {
+        showSnackBar(context, 'Cannot find $friend or already friends');
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     fetchData();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,17 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Image.asset(
-                              'assets/ranks/${clientInfoModel.rank}.png',
-                              height: 200,
-                              width: 200,
-                            ),
-                            const Text('Your rank is'),
-                          ],
-                        ),
+                      ShowClientInfos(
+                        clientInfoModel: clientInfoModel,
                       ),
                       const VerticalDivider(
                         color: Colors.black54,
@@ -92,27 +108,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(
                         width: MediaQuery.sizeOf(context).width * 0.3,
-                        child: CustomScrollView(
-                          slivers: <Widget>[
-                            const SliverToBoxAdapter(
-                              child: Text(
-                                'Friends',
-                                style: TextStyle(fontSize: 32),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                                  return Card(
-                                    color: Colors.grey[300],
-                                    child: Text(clientInfoModel.friends[index]),
-                                  );
-                                },
-                                childCount: clientInfoModel.friends.length,
-                              ),
-                            ),
-                          ],
+                        child: FriendsWidget(
+                          toggleOnPressedIcon: () {
+                            setState(() => showTextField = !showTextField);
+                            if (!showTextField) {
+                              controller.clear();
+                            }
+                          },
+                          toggleOnPressedBtn: () {
+                            addFriend(controller.text);
+                            controller.clear();
+                          },
+                          showTextField: showTextField,
+                          controller: controller,
+                          friends: clientInfoModel.friends,
                         ),
                       )
                     ],

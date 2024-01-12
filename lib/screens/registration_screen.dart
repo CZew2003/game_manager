@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../constants/snack_bar.dart';
 import '../models/client_model.dart';
-import '../services/sql_data_retriver_registration.dart';
+import '../services/sql_data_retriever_registration.dart';
 import '../widgets/button_text.dart';
 import '../widgets/login_button.dart';
 import '../widgets/skin_animation.dart';

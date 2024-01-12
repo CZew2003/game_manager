@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../constants/color_constants.dart';
 import '../models/champion_model.dart';
 import '../models/client_model.dart';
-import '../services/sql_data_retriver_champions.dart';
+import '../services/sql_data_retriever_champions.dart';
 import '../widgets/appbar_navigation.dart';
 import '../widgets/champion_widget.dart';
 import 'champion_info_screen.dart';

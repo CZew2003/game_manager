@@ -3,14 +3,16 @@ import 'package:provider/provider.dart';
 
 import '../constants/snack_bar.dart';
 import '../models/client_model.dart';
-import '../services/sql_data_retriver_registration.dart';
+import '../services/sql_data_retriever_registration.dart';
 import '../widgets/button_text.dart';
 import '../widgets/login_button.dart';
 import '../widgets/lol_black_logo.dart';
 import '../widgets/skin_animation.dart';
 import '../widgets/text_field_login.dart';
+import 'admin_home_screen.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
+import 'super_admin_home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,8 +42,17 @@ class LoginScreenState extends State<LoginScreen> {
       (bool result) async {
         if (result) {
           context.read<ClientModel>().user = controller1.text;
-          sqlDataRetriverRegistration.setClient(context, controller1.text);
-          Navigator.pushNamed(context, HomeScreen.route);
+          await sqlDataRetriverRegistration.setClient(context, controller1.text).then(
+            (void value) {
+              if (context.read<ClientModel>().role == Role.admin) {
+                Navigator.pushNamed(context, AdminHomeScreen.route);
+              } else if (context.read<ClientModel>().role == Role.superAdmin) {
+                Navigator.pushNamed(context, SuperAdminHomeScreen.route);
+              } else {
+                Navigator.pushNamed(context, HomeScreen.route);
+              }
+            },
+          );
         } else {
           controller1.clear();
           controller2.clear();
