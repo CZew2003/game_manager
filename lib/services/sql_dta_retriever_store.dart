@@ -25,4 +25,37 @@ class SqlDataRetrieverStore {
       await conn.close();
     });
   }
+
+  Future<void> buyRp(String username, int price) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(buyRpProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[username, price.toString()]);
+      });
+      await conn.close();
+    });
+  }
+
+  Future<void> buyOrangeEssence(String username, int price) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(buyOrangeEssenceProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[username, price.toString()]);
+      });
+      await conn.close();
+    });
+  }
+
+  Future<void> buyBlueEssence(String username, int price) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(buyBlueEssenceProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[username, price.toString()]);
+      });
+      await conn.close();
+    });
+  }
 }

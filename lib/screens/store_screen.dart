@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,20 +29,43 @@ class _StoreScreenState extends State<StoreScreen> {
   final List<Converter> converter = <Converter>[
     Converter(
       title: 'Blue Essence',
-      subtitle: '1RP -> 10BE',
+      subtitle: '1RP -> 10 BE',
       imagePath: 'assets/currencies/blueEssence.png',
+      price: 1,
+      functionType: 1,
+    ),
+    Converter(
+      title: 'Blue Essence',
+      subtitle: '100RP -> 1000 BE',
+      imagePath: 'assets/currencies/blueEssence.png',
+      price: 100,
+      functionType: 1,
     ),
     Converter(
       title: 'Orange Essence',
-      subtitle: '1RP -> 2OE',
+      subtitle: '1RP -> 2 OE',
       imagePath: 'assets/currencies/orangeEssence.png',
+      price: 1,
+      functionType: 2,
     ),
     Converter(
-        title: 'Champion Shard', subtitle: '10RP -> 1 Champion Shard', imagePath: 'assets/currencies/riotPoints.png'),
+      title: 'Orange Essence',
+      subtitle: '100RP -> 200 OE',
+      imagePath: 'assets/currencies/orangeEssence.png',
+      price: 100,
+      functionType: 2,
+    ),
+    Converter(
+      title: 'Champion Shard',
+      subtitle: '10RP -> 1 Champion Shard',
+      imagePath: 'assets/currencies/riotPoints.png',
+      functionType: 3,
+    ),
     Converter(
       title: 'Skin Shard',
       subtitle: '100RP -> 1 Skin Shard',
       imagePath: 'assets/currencies/riotPoints.png',
+      functionType: 4,
     ),
   ];
   SqlDataRetrieverStore sqlDataRetrieverStore = SqlDataRetrieverStore();
@@ -57,7 +77,6 @@ class _StoreScreenState extends State<StoreScreen> {
         .then((_) {
       context.read<ClientModel>().riotPoints = context.read<ClientModel>().riotPoints - 100;
     });
-    ;
   }
 
   Future<void> buyChampShard() async {
@@ -66,6 +85,35 @@ class _StoreScreenState extends State<StoreScreen> {
         .then((_) => showSnackBar(context, 'You have got a random champion shard'))
         .then((_) {
       context.read<ClientModel>().riotPoints = context.read<ClientModel>().riotPoints - 10;
+    });
+  }
+
+  Future<void> buyRP(int price, int rp) async {
+    await sqlDataRetrieverStore
+        .buyRp(context.read<ClientModel>().user, price)
+        .then((_) => showSnackBar(context, 'Payment Acquired'))
+        .then((_) {
+      context.read<ClientModel>().riotPoints = context.read<ClientModel>().riotPoints + rp;
+    });
+  }
+
+  Future<void> buyOrangeEssence(int price) async {
+    await sqlDataRetrieverStore
+        .buyOrangeEssence(context.read<ClientModel>().user, price)
+        .then((_) => showSnackBar(context, 'Payment Acquired'))
+        .then((_) {
+      context.read<ClientModel>().riotPoints = context.read<ClientModel>().riotPoints - price;
+      context.read<ClientModel>().orangeEssence = context.read<ClientModel>().orangeEssence + price * 2;
+    });
+  }
+
+  Future<void> buyBlueEssence(int price) async {
+    await sqlDataRetrieverStore
+        .buyOrangeEssence(context.read<ClientModel>().user, price)
+        .then((_) => showSnackBar(context, 'Payment Acquired'))
+        .then((_) {
+      context.read<ClientModel>().riotPoints = context.read<ClientModel>().riotPoints - price;
+      context.read<ClientModel>().blueEssence = context.read<ClientModel>().blueEssence + price * 10;
     });
   }
 
@@ -138,32 +186,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                       const SizedBox(height: 8.0),
                                       ElevatedButton(
                                         onPressed: () {
-                                          // Show a confirmation dialog when the "Buy" button is pressed
-                                          showDialog<String>(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text('Confirmation'),
-                                                content: Text('Do you want to buy ${productList[index].name}?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop(); // Close the dialog
-                                                    },
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      //////////////////////////////////////////////////////
-                                                      log('Buy button pressed for ${productList[index].name}');
-                                                      Navigator.of(context).pop(); // Close the dialog
-                                                    },
-                                                    child: const Text('Buy'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                                          buyRP(productList[index].price.toInt(), productList[index].cantity);
                                         },
                                         child: const Text('Buy'),
                                       ),
@@ -227,34 +250,15 @@ class _StoreScreenState extends State<StoreScreen> {
                                       ElevatedButton(
                                         onPressed: () {
                                           // Show a confirmation dialog when the "Buy" button is pressed
-                                          showDialog<String>(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text('Confirmation'),
-                                                content: Text('Do you want to buy ${converter[index].title}?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop(); // Close the dialog
-                                                    },
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      if (index == 2) {
-                                                        buyChampShard();
-                                                      } else if (index == 3) {
-                                                        buySkinShard();
-                                                      }
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Buy'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                                          if (converter[index].functionType == 1) {
+                                            buyBlueEssence(converter[index].price!);
+                                          } else if (converter[index].functionType == 2) {
+                                            buyOrangeEssence(converter[index].price!);
+                                          } else if (converter[index].functionType == 3) {
+                                            buyChampShard();
+                                          } else if (index == 4) {
+                                            buySkinShard();
+                                          }
                                         },
                                         child: const Text('Buy'),
                                       ),
@@ -283,11 +287,15 @@ class Converter {
     required this.title,
     required this.subtitle,
     required this.imagePath,
+    required this.functionType,
+    this.price,
   });
 
   final String title;
   final String subtitle;
   final String imagePath;
+  final int functionType;
+  final int? price;
 }
 
 class Product {
