@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/client_model.dart';
 import '../models/match_preview_model.dart';
 import '../models/player_preview_model.dart';
 import 'items_list_widget.dart';

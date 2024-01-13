@@ -120,11 +120,11 @@ class RanksChartState extends State<RanksChart> {
   @override
   void initState() {
     super.initState();
-    fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
+    fetchData();
     return Builder(builder: (BuildContext context) {
       if (loading) {
         return const Center(

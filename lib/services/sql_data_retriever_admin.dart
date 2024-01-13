@@ -1,10 +1,12 @@
 import 'dart:math';
 
-import 'package:mysql_client/src/mysql_client/connection.dart';
+import 'package:mysql_client/mysql_client.dart';
 
 import '../models/champion_panel_model.dart';
 import '../models/client_panel_model.dart';
 import '../models/employee_model.dart';
+import '../models/match_preview_model.dart';
+import '../models/player_preview_model.dart';
 import '../models/skins_panel_model.dart';
 import 'connector.dart';
 import 'sql_queries.dart';
@@ -268,5 +270,56 @@ class SqlDataRetrieverAdmin {
       });
       await conn.close();
     });
+  }
+
+  Future<MatchPreviewModel> getLastMatchPreview() async {
+    final Connector db = Connector();
+    late MatchPreviewModel match;
+
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.execute(getLastMatchPreviewQuery).then((IResultSet results) async {
+        for (final ResultSetRow row in results.rows) {
+          final List<PlayerPreviewModel> players = <PlayerPreviewModel>[];
+          final int matchId = int.parse(row.colAt(0)!);
+          final PreparedStmt stmt1 = await conn.prepare(getPlayerPreviewQuery);
+          await stmt1.execute(<String>[matchId.toString()]).then(
+            (IResultSet results1) {
+              for (final ResultSetRow row1 in results1.rows) {
+                final List<int> items = <int>[];
+                for (int i = 5; i < 11; i++) {
+                  items.add(int.parse(row1.colAt(i)!));
+                }
+                players.add(
+                  PlayerPreviewModel(
+                    username: row1.colAt(0)!,
+                    position: row1.colAt(1)!,
+                    team: row1.colAt(2)! == 'Blue team' ? Team.blue : Team.red,
+                    championName: row1.colAt(3)!,
+                    personalSkinId: int.parse(row1.colAt(4)!),
+                    items: items,
+                    damageDealt: int.parse(row1.colAt(11)!),
+                    primaryRunes: row1.colAt(12)!,
+                    secondaryRunes: row1.colAt(13)!,
+                    rank: row1.colAt(14)!,
+                  ),
+                );
+              }
+            },
+          );
+          await stmt1.deallocate();
+          match = MatchPreviewModel(
+            winner: row.colAt(2)! == 'Blue team' ? Team.blue : Team.red,
+            duration: int.parse(row.colAt(1)!),
+            matchId: matchId,
+            players: players,
+            user: '',
+          );
+        }
+      });
+      await conn.close();
+    });
+
+    return match;
   }
 }

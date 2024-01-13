@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../constants/snack_bar.dart';
-import '../models/client_panel_model.dart';
 import 'text_field_login.dart';
 
 class DialogEditClient extends StatefulWidget {

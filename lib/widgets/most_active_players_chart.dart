@@ -92,7 +92,9 @@ class _BarChart extends StatelessWidget {
 }
 
 class MostActivePlayersChart extends StatefulWidget {
-  const MostActivePlayersChart({super.key});
+  const MostActivePlayersChart({super.key, required this.rebuild});
+
+  final bool rebuild;
 
   @override
   State<StatefulWidget> createState() => MostActivePlayersChartState();
@@ -113,11 +115,12 @@ class MostActivePlayersChartState extends State<MostActivePlayersChart> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    //fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
+    fetchData();
     return Builder(builder: (BuildContext context) {
       if (loading) {
         return const Center(

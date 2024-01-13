@@ -1,4 +1,4 @@
-import 'package:mysql_client/src/mysql_client/connection.dart';
+import 'package:mysql_client/mysql_client.dart';
 
 import 'connector.dart';
 import 'sql_queries.dart';

@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
           case SuperAdminHomeScreen.route:
             return PageRouteWidget(screen: const SuperAdminHomeScreen());
           case SuperAdminPanel.route:
-            return PageRouteWidget(screen: SuperAdminPanel());
+            return PageRouteWidget(screen: const SuperAdminPanel());
           case MatchScreen.route:
             {
               final MatchPreviewModel matchPreviewModel = settings.arguments! as MatchPreviewModel;

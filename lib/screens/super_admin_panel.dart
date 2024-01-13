@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../constants/color_constants.dart';
+import '../constants/snack_bar.dart';
+import '../models/match_preview_model.dart';
 import '../services/sql_data_retriever_admin.dart';
 import '../widgets/appbar_navigation.dart';
 import '../widgets/display_money_generate_match.dart';
@@ -8,9 +10,10 @@ import '../widgets/employee_panel.dart';
 import '../widgets/most_active_players_chart.dart';
 import '../widgets/ranks_widget.dart';
 import '../widgets/regions_widget.dart';
+import 'match_screen.dart';
 
 class SuperAdminPanel extends StatefulWidget {
-  SuperAdminPanel({super.key});
+  const SuperAdminPanel({super.key});
   static const String route = 'Super-Admin-Panel';
 
   @override
@@ -19,6 +22,7 @@ class SuperAdminPanel extends StatefulWidget {
 
 class _SuperAdminPanelState extends State<SuperAdminPanel> {
   SqlDataRetrieverAdmin sqlDataRetrieverAdmin = SqlDataRetrieverAdmin();
+  bool rebuild = true;
 
   @override
   Widget build(BuildContext context) {
@@ -73,22 +77,22 @@ class _SuperAdminPanelState extends State<SuperAdminPanel> {
                               borderRadius: BorderRadius.circular(40),
                               color: Colors.blue[100],
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  Center(
+                                  const Center(
                                     child: Text(
                                       'Most Active Players',
                                       style: TextStyle(fontSize: 32),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Expanded(
-                                    child: MostActivePlayersChart(),
+                                    child: MostActivePlayersChart(rebuild: rebuild),
                                   ),
                                 ],
                               ),
@@ -113,6 +117,30 @@ class _SuperAdminPanelState extends State<SuperAdminPanel> {
                             children: <Widget>[
                               DisplayMoneyGenerateMatch(
                                 sqlDataRetrieverAdmin: sqlDataRetrieverAdmin,
+                                onPressed: () async {
+                                  await sqlDataRetrieverAdmin
+                                      .generateMatch()
+                                      .then(
+                                        (_) => showSnackBar(context, 'Match Generated'),
+                                      )
+                                      .then(
+                                    (_) async {
+                                      await sqlDataRetrieverAdmin.getLastMatchPreview().then(
+                                        (MatchPreviewModel match) async {
+                                          await Navigator.pushNamed(
+                                            context,
+                                            MatchScreen.route,
+                                            arguments: match,
+                                          );
+                                        },
+                                      );
+                                      print('da');
+                                      setState(() {
+                                        rebuild = !rebuild;
+                                      });
+                                    },
+                                  );
+                                },
                               ),
                               const RegionsWidget(),
                             ],
@@ -121,7 +149,7 @@ class _SuperAdminPanelState extends State<SuperAdminPanel> {
                         const SizedBox(
                           height: 50,
                         ),
-                        const RanksWidget(),
+                        RanksWidget(rebuild: rebuild),
                       ],
                     ),
                   ),

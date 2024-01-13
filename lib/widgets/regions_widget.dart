@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/widgets/region_chart.dart';
+import 'region_chart.dart';
 
 class RegionsWidget extends StatelessWidget {
   const RegionsWidget({super.key});

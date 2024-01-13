@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/widgets/text_field_login.dart';
+import 'text_field_login.dart';
 
 class FriendsWidget extends StatelessWidget {
   const FriendsWidget({

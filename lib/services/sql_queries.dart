@@ -296,3 +296,16 @@ const String buyBlueEssenceProcedure = 'call game_manager.rp_to_BlueEssence(?, ?
 const String updateClientProcedure = 'call game_manager.UpdateClient(?, ?, ?, ?);';
 
 const String updateChampionProcedure = 'call game_manager.UpdateChampion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+
+const String getLastMatchPreviewQuery = '''
+SELECT 
+      matches.idMatch, matches.duration, teams.name
+  FROM
+      matches
+          JOIN
+      teams ON matches.winner = teams.idTeam
+  WHERE
+      matches.idMatch = (select matches.idMatch from matches order by idMatch desc limit 1)
+  ORDER BY
+      matches.idMatch desc
+''';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/champion_panel_model.dart';
 import '../models/skins_panel_model.dart';
 import '../services/utils.dart';
 import 'dialog_edit_client.dart';

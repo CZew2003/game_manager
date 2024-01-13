@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../constants/snack_bar.dart';
 import '../services/sql_data_retriever_admin.dart';
 import 'money_widget.dart';
 
 class DisplayMoneyGenerateMatch extends StatelessWidget {
-  const DisplayMoneyGenerateMatch({super.key, required this.sqlDataRetrieverAdmin});
+  const DisplayMoneyGenerateMatch({
+    super.key,
+    required this.sqlDataRetrieverAdmin,
+    required this.onPressed,
+  });
 
   final SqlDataRetrieverAdmin sqlDataRetrieverAdmin;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +43,7 @@ class DisplayMoneyGenerateMatch extends StatelessWidget {
                   backgroundColor: Colors.red[400],
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
                 ),
-                onPressed: () async {
-                  await sqlDataRetrieverAdmin.generateMatch().then(
-                        (_) => showSnackBar(context, 'Match Generated'),
-                      );
-                },
+                onPressed: onPressed,
                 child: const Text(
                   'Generate Match',
                   style: TextStyle(fontSize: 20),

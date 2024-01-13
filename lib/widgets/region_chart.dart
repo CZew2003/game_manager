@@ -32,7 +32,7 @@ class RegionChartState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       if (loading) {
         return const Center(
           child: CircularProgressIndicator(),
@@ -78,8 +78,8 @@ class RegionChartState extends State {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: regions
                   .map(
-                    (region) => Column(
-                      children: [
+                    (Map<String, dynamic> region) => Column(
+                      children: <Widget>[
                         Indicator(
                           color: region['color'] as Color,
                           text: region['name'] as String,

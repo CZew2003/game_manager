@@ -2,8 +2,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Utils {
-  static List<T> modelBuilderRows<M, T>(List<M> models, T Function(int index, M model) builder) =>
-      models.asMap().map<int, T>((int index, model) => MapEntry<int, T>(index, builder(index, model))).values.toList();
+  static List<T> modelBuilderRows<M, T>(List<M> models, T Function(int index, M model) builder) => models
+      .asMap()
+      .map<int, T>((int index, M model) => MapEntry<int, T>(index, builder(index, model)))
+      .values
+      .toList();
 
   static Color getRandomColor() {
     final Random random = Random();

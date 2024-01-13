@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:game_manager/widgets/ranking_chart.dart';
+import 'ranking_chart.dart';
 
 class RanksWidget extends StatelessWidget {
-  const RanksWidget({super.key});
+  const RanksWidget({super.key, required this.rebuild});
+  final bool rebuild;
 
   @override
   Widget build(BuildContext context) {

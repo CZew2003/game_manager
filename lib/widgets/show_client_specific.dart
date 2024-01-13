@@ -17,7 +17,7 @@ class ShowClientSpecific extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Text(
           title,
           style: const TextStyle(

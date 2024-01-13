@@ -57,6 +57,6 @@ class SqlDataRetrieverMatches {
       await conn.close();
     });
 
-    return matches;
+    return matches.take(10).toList();
   }
 }

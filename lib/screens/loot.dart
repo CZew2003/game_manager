@@ -196,7 +196,6 @@ class _LootScreenState extends State<LootScreen> {
                                       imagePath: '${skin.championName}_${skin.personalId}.jpg',
                                       name: skin.skinName,
                                       buy: () async {
-                                        print(skin.id);
                                         await sqlDataRetrieverLoot
                                             .buySkinShard(
                                           context.read<ClientModel>().user,

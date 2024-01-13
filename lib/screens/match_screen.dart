@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mysql_client/mysql_protocol_extension.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/color_constants.dart';
 import '../models/client_model.dart';
@@ -21,6 +21,7 @@ class MatchScreen extends StatelessWidget {
         toggleOnTap: () {
           Navigator.pop(context);
         },
+        showStats: context.read<ClientModel>().role == Role.client,
       ).build(context),
       body: Container(
         decoration: BoxDecoration(
@@ -33,7 +34,7 @@ class MatchScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 32),
           child: ListView(
-            children: [
+            children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
