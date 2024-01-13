@@ -234,4 +234,39 @@ class SqlDataRetrieverAdmin {
       await conn.close();
     });
   }
+
+  Future<void> updateClient(String username, int riotPoints, int blueEssence, int orangeEssence) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(updateClientProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[username, riotPoints.toString(), blueEssence.toString(), orangeEssence.toString()]);
+      });
+      await conn.close();
+    });
+  }
+
+  Future<void> updateChampion(ChampionPanelModel champion) async {
+    final Connector db = Connector();
+    await db.getConnection().then((MySQLConnection conn) async {
+      await conn.connect();
+      await conn.prepare(updateChampionProcedure).then((PreparedStmt stmt) async {
+        await stmt.execute(<String>[
+          champion.name,
+          champion.fullPrice.toString(),
+          champion.shardPrice.toString(),
+          champion.disenchantPrice.toString(),
+          champion.health.toString(),
+          champion.mana.toString(),
+          champion.armor.toString(),
+          champion.magicResist.toString(),
+          champion.movementSpeed.toString(),
+          champion.healthRegen.toString(),
+          champion.damage.toString(),
+          champion.attackSpeed.toString(),
+        ]);
+      });
+      await conn.close();
+    });
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/snack_bar.dart';
 import '../models/client_model.dart';
 import '../models/client_panel_model.dart';
 import '../services/sql_data_retriever_admin.dart';
@@ -121,15 +122,26 @@ class _ClientPanelState extends State<ClientPanel> {
                                                     );
                                                   },
                                                 );
+                                                final int clientIndex = clients.indexOf(client);
                                                 setState(
                                                   () {
-                                                    clients[clients.indexOf(client)] = client.copyWith(
+                                                    clients[clientIndex] = client.copyWith(
                                                       blueEssence: index == 4 ? value!.toInt() : client.blueEssence,
                                                       orangeEssence: index == 5 ? value!.toInt() : client.orangeEssence,
                                                       riotPoints: index == 6 ? value!.toInt() : client.riotPoints,
                                                     );
                                                   },
                                                 );
+                                                await sqlDataRetrieverAdmin
+                                                    .updateClient(
+                                                      clients[clientIndex].username,
+                                                      clients[clientIndex].riotPoints,
+                                                      clients[clientIndex].blueEssence,
+                                                      clients[clientIndex].orangeEssence,
+                                                    )
+                                                    .then(
+                                                      (_) => showSnackBar(context, 'Update has been registered'),
+                                                    );
                                               },
                                       );
                                     }),

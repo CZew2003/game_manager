@@ -285,8 +285,6 @@ const String buySkinShardProcedure = 'call game_manager.BuySkinWithShard(?, ?);'
 
 const String updateSkinProcedure = 'call game_manager.UpdateSkin(?, ?, ?, ?);';
 
-const String updateChampionProcedure = 'call game_manager.UpdateChampion(?, ?, ?, ?);';
-
 const String addEmployeeProcedure = 'call game_manager.AddEmployee(?, ?, ?, ?, ?);';
 
 const String buyRpProcedure = 'call game_manager.buy_rp(?, ?);';
@@ -294,3 +292,7 @@ const String buyRpProcedure = 'call game_manager.buy_rp(?, ?);';
 const String buyOrangeEssenceProcedure = 'call game_manager.rp_to_OrrangeEssence(?, ?);';
 
 const String buyBlueEssenceProcedure = 'call game_manager.rp_to_BlueEssence(?, ?);';
+
+const String updateClientProcedure = 'call game_manager.UpdateClient(?, ?, ?, ?);';
+
+const String updateChampionProcedure = 'call game_manager.UpdateChampion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';

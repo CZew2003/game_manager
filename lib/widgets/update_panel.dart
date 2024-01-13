@@ -48,7 +48,6 @@ class _UpdatePanelState extends State<UpdatePanel> {
           .toList()
           .take(50)
           .toList();
-      ;
     });
     setState(() => isLoading = false);
   }
@@ -69,6 +68,9 @@ class _UpdatePanelState extends State<UpdatePanel> {
   Widget build(BuildContext context) {
     if (!widget.selected) {
       controller.clear();
+      isLoading = true;
+      champions.clear();
+      skins.clear();
     }
     return Flexible(
       flex: widget.selected ? 4 : 1,
@@ -151,11 +153,11 @@ class _UpdatePanelState extends State<UpdatePanel> {
                           if (panelType == PanelType.champion) {
                             return ChampionPanel(
                               champions: champions,
-                              changeState: (double? value, int index, ChampionPanelModel champion) {
+                              changeState: (double? value, int index, ChampionPanelModel champion) async {
+                                final int championIndex = champions.indexOf(champion);
                                 setState(
                                   () {
-                                    final int index = champions.indexOf(champion);
-                                    champions[champions.indexOf(champion)] = champion.copyWith(
+                                    champions[championIndex] = champion.copyWith(
                                       health: index == 1 ? value!.toInt() : champion.health,
                                       mana: index == 2 ? value!.toInt() : champion.mana,
                                       armor: index == 4 ? value!.toInt() : champion.armor,
@@ -170,6 +172,9 @@ class _UpdatePanelState extends State<UpdatePanel> {
                                     );
                                   },
                                 );
+                                await sqlDataRetrieverAdmin.updateChampion(champions[championIndex]).then(
+                                      (_) => showSnackBar(context, 'Update has been registered'),
+                                    );
                               },
                             );
                           }
