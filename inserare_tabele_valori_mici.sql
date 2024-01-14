@@ -7,7 +7,7 @@ insert into positions values
     (2, "Jungle"),
     (3, "Mid"),
     (4, "Bot"),
-    (5, "Supoort");
+    (5, "Support");
     
 insert into runes values
 	(1, "Domination", "Burst damage and target access"),
@@ -25,7 +25,7 @@ insert into ranks values
 	(6, "Diamond"),
 	(7, "Master"),
 	(8, "Grandmaster"),
-	(9, "Challanger");
+	(9, "Challenger");
     
 insert into roles values 
 	(1, "admin"),
@@ -36,12 +36,12 @@ insert into regions values
 	(2, "EUW", "Amsterdam", 0),
 	(3, "NA", "Chicago", 0);
     
-insert into UpdatesType(name) values 
-	("BUFF"), ("NERF"), ("REWORK");
-    
 insert into rpshop values
 (1,10,250),(2,25,625),(3,50,1250),
 (4,100,2500),(5,200,5000),(6,430,10750);
 
 insert into riotbank values
 (1,3000);
+
+
+delete from items where idItem = 3330 or idItem = 3600;

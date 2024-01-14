@@ -108,7 +108,7 @@ create table if not exists LootSkins(
     foreign key (idClient) references Clients(idClient));
     
 create table if not exists LootChampions(
-	idLootSkin int primary key auto_increment,
+	idLootChampion int primary key auto_increment,
     idChampion int,
     idClient int,
     foreign key (idClient) references Clients(idClient),
@@ -184,45 +184,7 @@ create table if not exists Events (
 	idEvent int primary key auto_increment,
     description varchar(45),
     eventTime date);
-    
-create table if not exists Updates (
-	idUpdate int primary key auto_increment,
-    updateNumber varchar(45));
-    
-create table if not exists UpdatesType (
-	idUpdatesType int primary key auto_increment,
-    name varchar(45));
-    
-create table if not exists UpdateChampion (
-	idUpdateChampion int primary key auto_increment,
-    idChampion int,
-    idUpdate int,
-    updateType int,
-    foreign key (idChampion) references Champions(idChampion),
-    foreign key (idUpdate) references Updates(idUpdate),
-    foreign key (updateType) references UpdatesType(idUpdatesType));
-    
 
-create table if not exists UpdateSpell(
-	idUpdateSpell int primary key auto_increment,
-    idSpell int,
-    idUpdate int,
-    updateType int,
-    foreign key (idSpell) references Spells(idSpell),
-    foreign key (idUpdate) references Updates(idUpdate),
-    foreign key (updateType) references UpdatesType(idUpdatesType));
-    
-
-create table if not exists UpdateItem (
-	idUpdateItem int primary key auto_increment,
-    idItem int,
-    idUpdate int,
-    updateType int,
-    foreign key (idItem) references Items(idItem),
-    foreign key (idUpdate) references Updates(idUpdate),
-    foreign key (updateType) references UpdatesType(idUpdatesType));
-    
-    
 create table if not exists riotBank (
 	idBank int primary key auto_increment,
     balance int);

@@ -62,12 +62,38 @@ CREATE TRIGGER add_default_skin AFTER INSERT ON clientchampions
   END; //
 delimiter ;
 
-DROP TRIGGER IF EXISTS add_event_on_update;
-delimiter //
 
-CREATE TRIGGER add_event_on_update AFTER INSERT ON updates
-  FOR EACH ROW BEGIN
-		INSERT INTO Events(description, eventTime)  values
-			("S-a adaugat un update nou", curdate());
-  END; //
-delimiter ;
+drop trigger if exists UpdateRankingTrigger;
+DELIMITER //
+
+CREATE TRIGGER UpdateRankingTrigger
+AFTER INSERT ON playermatch
+FOR EACH ROW
+BEGIN
+	DECLARE skinShard INT;
+    DECLARE statusMatches INT;
+    DECLARE ranking INT;
+    select clients.statusMatches into statusMatches from clients where clients.idClient = new.idPlayer;
+    select clients.ranking into ranking from clients where clients.idClient = new.idPlayer;
+    IF statusMatches = 3 THEN
+        if ranking < 10 THEN
+            update clients set clients.ranking = clients.ranking + 1 where clients.idClient = new.idPlayer;
+            update clients set clients.statusMatches = 0 where clients.idClient = new.idPlayer;
+		else
+			update clients set clients.statusMatches = 2 where clients.idClient = new.idPlayer;
+        END IF;
+		select idSkin into skinShard from skins where skins.personalId != 0 order by rand() limit 1;
+		insert into lootskins (idClient, idSkin) values (NEW.idPlayer, skinShard);
+
+    ELSEIF statusMatches = -3 THEN
+        IF ranking > 1 THEN
+            update clients set clients.ranking = clients.ranking - 1 where clients.idClient = new.idPlayer;
+            update clients set clients.statusMatches = 0 where clients.idClient = new.idPlayer;
+		ELSE
+			update clients set clients.statusMatches = -2 where clients.idClient = new.idPlayer;
+        END IF;
+
+    END IF;
+END //
+
+DELIMITER ;
